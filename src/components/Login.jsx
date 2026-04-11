@@ -24,13 +24,13 @@ const Signin = ({ handleLogin }) => {
 
     return (
         <div className="login">
-            <Header />
             <p className="login__welcome">
                 Entrar
             </p>
             <form className="login__form" onSubmit={handleSubmit}>
-                <label htmlFor="email">Email:</label>
+                <label htmlFor="email"></label>
                 <input
+                    className="login__email"
                     id="email"
                     placeholder="Email"
                     type="email"
@@ -38,8 +38,9 @@ const Signin = ({ handleLogin }) => {
                     onChange={handleChange}
                     required
                 />
-                <label htmlFor="password">Senha:</label>
+                <label htmlFor="password"></label>
                 <input
+                    className="login__password"
                     id="password"
                     placeholder="Senha"
                     type="password"
@@ -49,15 +50,14 @@ const Signin = ({ handleLogin }) => {
                 />
                 <div className="login__button-container">
                     <button type="submit" className="login__link">
-                        Login
+                        Entrar
                     </button>
                 </div>
             </form>
 
             <div className="login__signup">
-                <p>Ainda não é membro?</p>
                 <Link to="/signup" className="signup__link">
-                    Inscreva-se aqui
+                    Ainda não é membro? Inscreva-se aqui!
                 </Link>
             </div>
         </div>

@@ -10,6 +10,7 @@ import { setToken, getToken } from "../utils/token.js";
 import api from "../utils/api";
 import Signup from "./Register.jsx";
 import Signin from "./Login.jsx";
+import Layout from "./Layout.jsx";
 
 
 
@@ -32,7 +33,7 @@ export default function App() {
       auth
         .signup(username, password, email)
         .then(() => {
-          navigate("/login");
+          navigate("/signin");
         })
         .catch(console.error);
     }
@@ -148,11 +149,17 @@ export default function App() {
       handleCardDelete, handleAddPlaceSubmit, isLoggedIn, setIsLoggedIn
     }}>
       <Routes>
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/signup" element={
+          <Layout>
+            <Signup />
+          </Layout>
+        } />
 
-        <Route path="/signin" element={<Signin setIsLoggedIn={setIsLoggedIn} />} />
-
-        {/* rota protegida */}
+        <Route path="/signin" element={
+          <Layout>
+            <Signin setIsLoggedIn={setIsLoggedIn} />
+          </Layout>
+        } />
         <Route
           path="/"
           element={
