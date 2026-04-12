@@ -114,7 +114,7 @@ export default function App() {
       const userData = getAuthUser(authResponse);
 
       if (!userData) {
-        return;
+        throw new Error("Usuário não encontrado após autenticação.");
       }
 
       setIsLoggedIn(true);
@@ -125,7 +125,7 @@ export default function App() {
     } catch (error) {
       console.error(error);
       clearSession();
-      openInfoTooltip(false, "Nao foi possivel entrar. Verifique email e senha.");
+      openInfoTooltip(false, "Não foi possível entrar. Verifique email e senha.");
     }
   }
 
