@@ -81,6 +81,10 @@
   top: 18px;
   z-index: 0;
   position: absolute;
+}
+
+.card__delete-icon:hover {
+  opacity: 0.6;
   cursor: pointer;
 }
 
