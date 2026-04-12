@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import "../blocks/register.css";
 
-const Signup = ({ handleRegistration }) => {
+const Register = ({ handleRegistration }) => {
     const [data, setData] = useState({
         email: "",
         password: "",
@@ -58,4 +58,4 @@ const Signup = ({ handleRegistration }) => {
     );
 };
 
-export default Signup;
+export default Register;

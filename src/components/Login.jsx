@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import "../blocks/login.css";
 
-const Signin = ({ handleLogin }) => {
+const Login = ({ handleLogin }) => {
     const [data, setData] = useState({
         email: "",
         password: "",
@@ -61,4 +61,4 @@ const Signin = ({ handleLogin }) => {
     );
 };
 
-export default Signin;
+export default Login;
