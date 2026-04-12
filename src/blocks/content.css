@@ -51,6 +51,8 @@
   width: 21px;
   height: 21px;
   border: none;
+  padding: 0;
+  background-color: transparent;
   background-image: url(../images/LikeVector.svg);
   background-repeat: no-repeat;
   background-position: center;

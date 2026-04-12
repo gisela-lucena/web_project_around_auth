@@ -78,6 +78,7 @@ function Main({ popup, onOpenPopup, onClosePopup, cards }) {
             <Card
               key={card._id}
               card={card}
+              handleOpenPopup={onOpenPopup}
               onCardLike={handleCardLike}
               onCardDelete={() => {
                 // Abre popup de confirmação passando card diretamente
