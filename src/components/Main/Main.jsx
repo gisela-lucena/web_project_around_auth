@@ -1,6 +1,6 @@
 import editIcon from "../../images/editButtonVector.svg";
 import addIcon from "../../images/addButton.png";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import Popup from "./components/Popup/Popup.jsx";
 import NewCard from "./components/NewCard/NewCard.jsx";
 import EditProfile from "./components/NewCard/EditProfile.jsx";
@@ -23,7 +23,7 @@ function Main({ popup, onOpenPopup, onClosePopup, cards }) {
           <div className="profile__picture">
             <img
               className="profile__image"
-              src={currentUser.avatar}
+              src={currentUser.avatar || undefined}
               alt="Jacques Cousteau profile picture"
             />
             <div className="profile__picture-overlay">

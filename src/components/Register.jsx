@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import Header from "./Header/Header";
 import "../blocks/register.css";
 
 const Signup = ({ handleRegistration }) => {
@@ -26,29 +25,29 @@ const Signup = ({ handleRegistration }) => {
         <div className="register">
             <p className="register__welcome">Inscreva-se</p>
             <form className="register__form" onSubmit={handleSubmit}>
-                <label htmlFor="email">Email:</label>
-                <input className="register__email"
+                <input
+                    className="register__input"
                     id="email"
+                    name="email"
                     placeholder="Email"
                     type="email"
                     value={data.email}
                     onChange={handleChange}
                     required
                 />
-                <label htmlFor="password">Senha:</label>
-                <input className="register__password"
+                <input
+                    className="register__input"
                     id="password"
+                    name="password"
                     placeholder="Senha"
                     type="password"
                     value={data.password}
                     onChange={handleChange}
                     required
                 />
-                <div className="register__button-container">
-                    <button type="submit" className="register__link">
-                        Inscreva-se aqui
-                    </button>
-                </div>
+                <button type="submit" className="register__button">
+                    Inscreva-se
+                </button>
             </form>
             <div className="register__signin">
                 <Link to="/signin" className="register__login-link">

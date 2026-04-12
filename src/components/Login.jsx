@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import "../blocks/login.css";
-import Header from "./Header/Header";
 
 const Signin = ({ handleLogin }) => {
     const [data, setData] = useState({
@@ -28,31 +27,29 @@ const Signin = ({ handleLogin }) => {
                 Entrar
             </p>
             <form className="login__form" onSubmit={handleSubmit}>
-                <label htmlFor="email"></label>
                 <input
-                    className="login__email"
+                    className="login__input"
                     id="email"
+                    name="email"
                     placeholder="Email"
                     type="email"
                     value={data.email}
                     onChange={handleChange}
                     required
                 />
-                <label htmlFor="password"></label>
                 <input
-                    className="login__password"
+                    className="login__input"
                     id="password"
+                    name="password"
                     placeholder="Senha"
                     type="password"
                     value={data.password}
                     onChange={handleChange}
                     required
                 />
-                <div className="login__button-container">
-                    <button type="submit" className="login__link">
-                        Entrar
-                    </button>
-                </div>
+                <button type="submit" className="login__button">
+                    Entrar
+                </button>
             </form>
 
             <div className="login__signup">

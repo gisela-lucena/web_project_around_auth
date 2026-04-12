@@ -6,9 +6,10 @@ class Api {
 
   _handleServerResponse(res) {
     if (res.ok) {
-      return res.json();
+      return res.json().then((payload) => payload?.data ?? payload);
     }
-    return Promise.reject(`Error: ${res.status}`);
+
+    return Promise.reject(new Error(`Error: ${res.status}`));
   }
 
   _request(url, options = {}) {
@@ -63,9 +64,7 @@ class Api {
   }
 
   changeLikeCardStatus(cardId, isLiked) {
-    return isLiked
-      ? this.likeCard(cardId)
-      : this.unlikeCard(cardId);
+    return isLiked ? this.likeCard(cardId) : this.unlikeCard(cardId);
   }
 
   updateAvatar(avatarLink) {
@@ -77,9 +76,13 @@ class Api {
 }
 
 const api = new Api({
-  baseUrl: "https://around-api.pt-br.tripleten-services.com/v1",
+  baseUrl:
+    import.meta.env.VITE_AROUND_API_BASE_URL ||
+    "https://around-api.en.tripleten-services.com/v1",
   headers: {
-    authorization: "b6c48350-073f-4ba1-b66b-777746c5da2d",
+    authorization:
+      import.meta.env.VITE_AROUND_API_AUTH_TOKEN ||
+      "b6c48350-073f-4ba1-b66b-777746c5da2d",
     "Content-Type": "application/json",
   },
 });

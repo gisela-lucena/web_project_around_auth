@@ -1,184 +1,265 @@
 import "../App.css";
+import { Route, Routes, Navigate, useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Header from "./Header/Header.jsx";
 import Main from "./Main/Main.jsx";
 import Footer from "./Footer/Footer.jsx";
-import CurrentUserContext from "../contexts/CurrentUserContext.js";
-import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
-import * as auth from "../utils/auth";
-import { setToken, getToken } from "../utils/token.js";
-import api from "../utils/api";
+import Layout from "./Layout.jsx";
 import Signup from "./Register.jsx";
 import Signin from "./Login.jsx";
-import Layout from "./Layout.jsx";
+import ProtectedRoute from "./ProtectedRoute.jsx";
+import InfoToolTip from "./InfoToolTip.jsx";
+import CurrentUserContext from "../contexts/CurrentUserContext.js";
+import * as auth from "../utils/auth.js";
+import { getToken, removeToken, setToken } from "../utils/token.js";
+import api from "../utils/api.js";
 
+const EMPTY_USER = { name: "", about: "", avatar: "" };
 
+function getAuthUser(response) {
+  return response?.data || response;
+}
 
 export default function App() {
   const [popup, setPopup] = useState(null);
-  const [currentUser, setCurrentUser] = useState({ username: "", email: "" });
+  const [currentUser, setCurrentUser] = useState(EMPTY_USER);
   const [cards, setCards] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
+  const [isRegistrationSuccess, setIsRegistrationSuccess] = useState(false);
+  const [infoTooltipMessage, setInfoTooltipMessage] = useState("");
 
   const navigate = useNavigate();
-
   const location = useLocation();
 
-  const handleRegistration = ({
-    username,
-    email,
-    password
-  }) => {
-    if (password === confirmPassword) {
-      auth
-        .signup(username, password, email)
-        .then(() => {
-          navigate("/signin");
-        })
-        .catch(console.error);
-    }
-  };
+  function openInfoTooltip(isSuccess, message) {
+    setIsRegistrationSuccess(isSuccess);
+    setInfoTooltipMessage(message);
+    setIsInfoTooltipOpen(true);
+  }
 
-  const handleLogin = ({ username, password }) => {
-    if (!username || !password) {
+  function clearSession() {
+    removeToken();
+    setIsLoggedIn(false);
+    setUserEmail("");
+    setCards([]);
+    setCurrentUser(EMPTY_USER);
+  }
+
+  useEffect(() => {
+    const token = getToken();
+
+    if (!token) {
       return;
     }
 
     auth
-      .signin(username, password)
-      .then((data) => {
-        if (data.jwt) {
-          setToken(data.jwt);
-          setUserData(data.user);
-          setIsLoggedIn(true);
-
-          const redirectPath = location.state?.from?.pathname || "/";
-          navigate(redirectPath);
-        }
+      .checkToken(token)
+      .then((response) => {
+        const userData = getAuthUser(response);
+        setIsLoggedIn(true);
+        setUserEmail(userData?.email || "");
       })
-      .catch(console.error);
-  };
+      .catch((error) => {
+        console.error(error);
+        clearSession();
+      });
+  }, []);
 
   useEffect(() => {
-    const jwt = getToken();
-    if (!jwt) {
+    if (!isLoggedIn) {
       return;
     }
+
     api
-      .getUserInfo(jwt)
-      .then(({ username, email }) => {
-        // Se a resposta for bem-sucedida, permita o login do usuário, salve seus
-        // dados no estado e mande ele para /ducks.
-        setIsLoggedIn(true);
-        setUserData({ username, email });
-
+      .getInitialData()
+      .then(([userData, initialCards]) => {
+        setCurrentUser(userData);
+        setCards(initialCards);
       })
-      .catch(console.error);
-  }, []);
-
-
-  useEffect(() => {
-    api
-      .getInitialCards()
-      .then((data) => {
-        setCards(data);
-      })
-      .catch((err) => {
-        console.error(err);
+      .catch((error) => {
+        console.error(error);
       });
+  }, [isLoggedIn]);
 
-    api.getUser().then((data) => {
-      setCurrentUser(data)
-    })
-  }, []);
+  function handleRegistration(data) {
+    auth
+      .signup(data)
+      .then(() => {
+        openInfoTooltip(true, "Cadastro realizado com sucesso!");
+        navigate("/signin");
+      })
+      .catch((error) => {
+        console.error(error);
+        openInfoTooltip(false, "Ops, algo deu errado. Por favor, tente novamente.");
+      });
+  }
 
+  function handleLogin(data) {
+    auth
+      .signin(data)
+      .then((response) => {
+        const jwt = response.token || response.jwt;
+
+        if (!jwt) {
+          return Promise.reject(new Error("Ops, algo deu errado. Por favor, tente novamente."));
+        }
+
+        setToken(jwt);
+        return auth.checkToken(jwt);
+      })
+      .then((response) => {
+        const userData = getAuthUser(response);
+
+        if (!userData) {
+          return;
+        }
+
+        setIsLoggedIn(true);
+        setUserEmail(userData.email || "");
+
+        const redirectPath = location.state?.from?.pathname || "/";
+        navigate(redirectPath, { replace: true });
+      })
+      .catch((error) => {
+        console.error(error);
+        clearSession();
+        openInfoTooltip(false, "Nao foi possivel entrar. Verifique email e senha.");
+      });
+  }
+
+  function handleSignOut() {
+    clearSession();
+    navigate("/signin", { replace: true });
+  }
 
   async function handleCardLike(card) {
-    // Verificar mais uma vez se esse cartão já foi curtido
     const isLiked = card.isLiked;
-    // Enviar uma solicitação para a API e obter os dados do cartão atualizados
-    await api.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
-      setCards((state) => state.map((currentCard) => currentCard._id === card._id ? newCard : currentCard));
-    }).catch((error) => console.error(error));
+
+    return api
+      .changeLikeCardStatus(card._id, !isLiked)
+      .then((newCard) => {
+        setCards((state) =>
+          state.map((currentCard) => (currentCard._id === card._id ? newCard : currentCard))
+        );
+      })
+      .catch((error) => console.error(error));
   }
 
   async function handleCardDelete(card) {
-    await api.deleteCard(card._id).then(() => {
-      setCards((state) => state.filter((currentCard) => currentCard._id !== card._id))
-      handleClosePopup();
-    }).catch((error) => console.error(error));
+    return api
+      .deleteCard(card._id)
+      .then(() => {
+        setCards((state) => state.filter((currentCard) => currentCard._id !== card._id));
+        handleClosePopup();
+      })
+      .catch((error) => console.error(error));
   }
 
   async function handleAddPlaceSubmit(card) {
-    await api.addNewCard(card.name, card.link).then((newCard) => {
-      setCards([newCard, ...cards])
-      handleClosePopup();
-    }).catch((error) => console.error(error));
+    return api
+      .addNewCard(card.name, card.link)
+      .then((newCard) => {
+        setCards((state) => [newCard, ...state]);
+        handleClosePopup();
+      })
+      .catch((error) => console.error(error));
   }
 
-  const handleUpdateUser = (data) => {
-    (async () => {
-      await api.setUserInfo(data.name, data.about).then((newData) => {
+  function handleUpdateUser(data) {
+    return api
+      .setUserInfo(data.name, data.about)
+      .then((newData) => {
         setCurrentUser(newData);
         handleClosePopup();
-      }).catch((error) => console.error(error));
-    })();
-  };
+      })
+      .catch((error) => console.error(error));
+  }
 
-  const handleUpdateAvatar = (data) => {
-    (async () => {
-      await api.updateAvatar(data.avatar).then((newData) => {
+  function handleUpdateAvatar(data) {
+    return api
+      .updateAvatar(data.avatar)
+      .then((newData) => {
         setCurrentUser(newData);
         handleClosePopup();
-      }).catch((error) => console.error(error));
-    })();
-  };
+      })
+      .catch((error) => console.error(error));
+  }
 
   function handleClosePopup() {
     setPopup(null);
   }
 
-  function handleOpenPopup(popup) {
-    setPopup(popup);
+  function handleOpenPopup(nextPopup) {
+    setPopup(nextPopup);
   }
 
-  return (
-    <CurrentUserContext.Provider value={{
-      currentUser, handleUpdateUser,
-      handleUpdateAvatar, handleCardLike,
-      handleCardDelete, handleAddPlaceSubmit, isLoggedIn, setIsLoggedIn
-    }}>
-      <Routes>
-        <Route path="/signup" element={
-          <Layout>
-            <Signup />
-          </Layout>
-        } />
+  function handleCloseInfoTooltip() {
+    setIsInfoTooltipOpen(false);
+  }
 
-        <Route path="/signin" element={
-          <Layout>
-            <Signin setIsLoggedIn={setIsLoggedIn} />
-          </Layout>
-        } />
+  const headerProps = {
+    email: userEmail,
+    isLoggedIn,
+    onSignOut: handleSignOut,
+  };
+
+  return (
+    <CurrentUserContext.Provider
+      value={{
+        currentUser,
+        handleUpdateUser,
+        handleUpdateAvatar,
+        handleCardLike,
+        handleCardDelete,
+        handleAddPlaceSubmit,
+        isLoggedIn,
+        setIsLoggedIn,
+      }}
+    >
+      <Routes>
+        <Route
+          path="/signup"
+          element={
+            <Layout headerProps={headerProps}>
+              <Signup handleRegistration={handleRegistration} />
+            </Layout>
+          }
+        />
+        <Route
+          path="/signin"
+          element={
+            <Layout headerProps={headerProps}>
+              <Signin handleLogin={handleLogin} />
+            </Layout>
+          }
+        />
         <Route
           path="/"
           element={
-            isLoggedIn ?
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
               <div className="page">
-                <Header />
+                <Header {...headerProps} />
                 <Main
                   onOpenPopup={handleOpenPopup}
                   onClosePopup={handleClosePopup}
                   popup={popup}
-                  cards={cards} />
+                  cards={cards}
+                />
                 <Footer />
               </div>
-              : <Navigate to="/signin" replace />
+            </ProtectedRoute>
           }
         />
-
-      </Routes >
+        <Route path="*" element={<Navigate to={isLoggedIn ? "/" : "/signin"} replace />} />
+      </Routes>
+      <InfoToolTip
+        isOpen={isInfoTooltipOpen}
+        isSuccess={isRegistrationSuccess}
+        message={infoTooltipMessage}
+        onClose={handleCloseInfoTooltip}
+      />
     </CurrentUserContext.Provider>
   );
 }
-
