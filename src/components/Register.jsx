@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import "../blocks/register.css";
+import useAppState from "../hooks/useAppState.js";
 
-const Register = ({ handleRegistration }) => {
+const Register = () => {
+    const { actions } = useAppState();
     const [data, setData] = useState({
         email: "",
         password: "",
@@ -18,7 +20,7 @@ const Register = ({ handleRegistration }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        handleRegistration(data);
+        actions.handleRegistration(data);
     };
 
     return (

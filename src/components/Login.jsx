@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import "../blocks/login.css";
+import useAppState from "../hooks/useAppState.js";
 
-const Login = ({ handleLogin }) => {
+const Login = () => {
+    const { actions } = useAppState();
     const [data, setData] = useState({
         email: "",
         password: "",
@@ -18,7 +20,7 @@ const Login = ({ handleLogin }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        handleLogin(data);
+        actions.handleLogin(data);
     };
 
     return (

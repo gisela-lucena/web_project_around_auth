@@ -1,10 +1,10 @@
 import Header from "./Header/Header";
 import Footer from "./Footer/Footer";
 
-export default function Layout({ children, headerProps }) {
+export default function Layout({ children }) {
     return (
         <div className="page">
-            <Header {...headerProps} />
+            <Header />
             <main className="content">
                 {children}
             </main>

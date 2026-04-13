@@ -8,13 +8,15 @@ import EditAvatar from "./components/NewCard/EditAvatar.jsx";
 import Card from "./components/Card/Card.jsx";
 import CurrentUserContext from "../../contexts/CurrentUserContext";
 import ConfirmPopup from "./components/NewCard/ConfirmPopup.jsx";
+import useAppState from "../../hooks/useAppState.js";
 
 
-function Main({ popup, onOpenPopup, onClosePopup, cards }) {
+function Main() {
   const newCardPopup = { title: "New card", children: <NewCard /> };
   const editProfilePopup = { title: "Edit profile", children: <EditProfile /> };
   const editAvatarPopup = { title: "Edit avatar", children: <EditAvatar /> };
   const { currentUser, handleCardDelete, handleCardLike } = useContext(CurrentUserContext);
+  const { cards, popup, actions } = useAppState();
   
   return (
     <>
@@ -31,7 +33,7 @@ function Main({ popup, onOpenPopup, onClosePopup, cards }) {
                 className="profile__edit-avatar"
                 aria-label="Editar avatar"
                 type="button"
-                onClick={() => onOpenPopup(editAvatarPopup)}
+                onClick={() => actions.openPopup(editAvatarPopup)}
               >
                 <img
                   className="profile__avatar-edit-icon"
@@ -48,7 +50,7 @@ function Main({ popup, onOpenPopup, onClosePopup, cards }) {
                 className="profile__edit-button"
                 aria-label="Editar perfil"
                 type="button"
-                onClick={() => onOpenPopup(editProfilePopup)}
+                onClick={() => actions.openPopup(editProfilePopup)}
               >
                 <img
                   className="profile__edit-icon"
@@ -63,7 +65,7 @@ function Main({ popup, onOpenPopup, onClosePopup, cards }) {
             className="profile__add-place"
             aria-label="Adicionar local"
             type="button"
-            onClick={() => onOpenPopup(newCardPopup)}
+            onClick={() => actions.openPopup(newCardPopup)}
           >
             <img
               className="profile__add-icon"
@@ -78,17 +80,15 @@ function Main({ popup, onOpenPopup, onClosePopup, cards }) {
             <Card
               key={card._id}
               card={card}
-              handleOpenPopup={onOpenPopup}
+              handleOpenPopup={actions.openPopup}
               onCardLike={handleCardLike}
               onCardDelete={() => {
-                // Abre popup de confirmação passando card diretamente
-                onOpenPopup({
+                actions.openPopup({
                   title: "Tem certeza?",
                   children: (
                     <ConfirmPopup
                       onConfirm={() => {
                         handleCardDelete(card);
-                        onClosePopup();
                       }}
                     />
                   ),
@@ -101,7 +101,7 @@ function Main({ popup, onOpenPopup, onClosePopup, cards }) {
 
         {popup && (
           <Popup title={popup.title}
-            onClose={onClosePopup}>
+            onClose={actions.closePopup}>
             {popup.children}
           </Popup>
         )}

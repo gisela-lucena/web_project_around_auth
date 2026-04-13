@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../images/logoVector.svg";
+import useAppState from "../../hooks/useAppState.js";
 
-function Header({ email = "", isLoggedIn = false, onSignOut }) {
+function Header() {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { auth, actions } = useAppState();
+  const { userEmail: email = "", isLoggedIn = false } = auth;
 
   const authLinkConfig =
     location.pathname === "/signup"
@@ -25,7 +28,7 @@ function Header({ email = "", isLoggedIn = false, onSignOut }) {
             type="button"
             onClick={() => {
               setIsMobileMenuOpen(false);
-              onSignOut();
+              actions.handleSignOut();
             }}
           >
             Sair
@@ -40,7 +43,7 @@ function Header({ email = "", isLoggedIn = false, onSignOut }) {
           <>
             <div className="header__auth">
               <p className="header__email">{email}</p>
-              <button className="header__button" type="button" onClick={onSignOut}>
+              <button className="header__button" type="button" onClick={actions.handleSignOut}>
                 Sair
               </button>
             </div>

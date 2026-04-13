@@ -1,59 +1,112 @@
-# 🌎 Around the U.S. (React)
-
 📖 About the Project
-Around the US is an interactive web application developed in React that allows users to share photos of interesting places in the United States. This project represents the complete evolution of a vanilla JavaScript application to React, implementing modern frontend development concepts. 🎯 Features
+
+# Around Auth - Authentication System
+
+## Project Description
+
+Around Auth is a web application built with React that allows users to share photos of interesting places. This version includes a complete authentication system featuring user registration and login, expanding the functionality of the original Around project. ## Features
+
+### User Authentication
+
+- **New user registration** via email and password
+- **Secure login** with credential validation
+- **Logout** with session cleanup
+- **Route protection** – access restricted to authenticated users
+- **Session persistence** using localStorage
+
 ### Profile Management
-- Profile viewing - User's name, description, and avatar
-- Profile editing - Updating name and description
-- Avatar editing - Uploading and updating the profile picture
+
+- **Viewing and editing** of profile information
+- **Custom avatar upload**
+- **Real-time form validation**
 
 ### Card Management
-- Photo gallery - Viewing cards with images and titles
-- Add card - Uploading new photos with title and link
-- Like/Unlike - Like system for cards
-- Delete card - Removal of own cards
-- Enlarged view - Popup to view images in a larger size
 
-### Interactive Interface
-- Modal popups - For all editing and viewing actions
-- Form validation - Required fields and valid formats
-- Visual feedback - Loading and confirmation states
-- Responsive design - Adaptation for different screen sizes
+- **Adding new cards** with a photo and description
+- **"Like" system** for cards
+- **Deletion** of one's own cards
+- **Popup view** for full-size images
 
-🛠️ Technologies Used
-React 18
-Main library for building the interface
-React Hooks
-useState, useEffect, useContext for state management
-Context API
-Sharing user data between components
-Vite
-Build and development tool
-CSS3
-Styling with BEM methodology
-REST API
-Integration with the backend for data persistence
----
+### Responsive Interface
+
+- **Adaptive design** for desktop, tablet, and mobile
+- **Informative popups** for user feedback
+- **Intuitive navigation** between different sections
+
+## Technologies Used
+
+- **React 18** – JavaScript library for user interfaces
+- **React Router DOM** – Routing for React applications
+- **JavaScript ES6+** – Modern programming language
+- **HTML5** – Semantic structuring
+- **CSS3** – Styling and responsiveness
+- **Create React App** – Build and development tool
+- **Git & GitHub** – Version control
+
+## Implemented Techniques
+
+### Advanced React
+
+- **Custom Hooks** (useState, useEffect, useContext)
+- **Context API** for global state management
+- **Functional components** with props and state
+- **Conditional rendering** based on authentication status
+
+### State Management
+
+- **CurrentUserContext** for logged-in user data
+- **Local state** for popup and form control
+- **Persistence** of authentication tokens
+
+### API Integration
+
+- **HTTP requests** to the authentication backend
+- **Error handling** and visual feedback
+- **Validation** of API responses
+
+## Structure of the Project
+
+```
+src/
+├── components/
+│   ├── App.js
+│   ├── Header.js
+│   ├── Main.js
+│   ├── Footer.js
+│   ├── Card.js
+│   ├── ImagePopup.js
+│   ├── PopupWithForm.js
+│   ├── AddPlacePopup.js
+│   ├── EditProfilePopup.js
+│   ├── EditAvatarPopup.js
+│   ├── Login.js
+│   ├── Register.js
+│   ├── ProtectedRoute.js
+│   └── InfoTooltip.js
+├── contexts/
+│   └── CurrentUserContext.js
+├── utils/
+│   └── api.js
+├── blocks/
+│   └── [CSS files organized by blocks]
+├── images/
+│   └── [project images and icons]
+├── index.css
+└── index.js---
+
+##
 
 ⚙️ Installation and Execution
 ### Prerequisites
 - Node.js (version 16 or higher)
 - npm or yarn
 
-Installation steps:
-Clone the repository:
-git clone [REPOSITORY_URL]
-cd web_project_around_react
-Install dependencies:
-npm install
-Configure the API:
-Update the src/utils/api.js file with your credentials -
 ---
 
 ## 👩‍💻 Author
 
-**Gisela Lucena**
-Front-End Developer | JavaScript & Web Applications
+**Gisela Elia**
+Full-Stack Developer | JavaScript & Web Applications
 📧 www.linkedin.com/in/giselaelia
 🌐 https://github.com/gisela-lucena
 
@@ -70,3 +123,4 @@ Feel free to use, modify, and distribute it as long as proper credit is given.
 
 ---
 
+```
